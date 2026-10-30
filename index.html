@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realme P4 WebADB Debloater</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: #1e293b; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        h1 { color: #f59e0b; margin-top: 0; }
+        button { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-right: 10px; }
+        button:hover { background: #2563eb; }
+        button.danger { background: #ef4444; }
+        button.danger:hover { background: #dc2626; }
+        .pkg-list { margin: 20px 0; max-height: 250px; overflow-y: auto; background: #0f172a; padding: 15px; border-radius: 6px; }
+        .pkg-item { display: flex; align-items: center; margin: 8px 0; }
+        .pkg-item input { margin-right: 10px; }
+        #console { background: black; color: #10b981; font-family: monospace; padding: 15px; border-radius: 6px; height: 180px; overflow-y: auto; white-space: pre-wrap; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Realme P4 Debloater & Analyzer</h1>
+    <p>Status: <span id="status" style="color: #ef4444; font-weight: bold;">Disconnected</span></p>
+    
+    <button id="btnConnect">1. Connect Phone</button>
+    <button id="btnScan" disabled>2. Scan & Analyze</button>
+    <button id="btnDebloat" class="danger" disabled>3. Run Selected Debloat</button>
+
+    <h3>Target Bloatware Packages</h3>
+    <div class="pkg-list" id="pkgContainer">
+        <!-- Packages will populate here dynamically -->
+    </div>
+
+    <h3>Live WebADB Log</h3>
+    <div id="console">Log initialized. Please connect your device via USB with USB Debugging enabled...</div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
