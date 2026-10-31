@@ -1,111 +1,802 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Realme UI Comprehensive WebADB Debloater</title>
-    <style>
-        :root {
-            --bg-main: #0f172a;
-            --bg-card: #1e293b;
-            --text-main: #e2e8f0;
-            --accent: #f59e0b;
-            --success: #10b981;
-            --danger: #ef4444;
-            --info: #3b82f6;
-        }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: var(--bg-main); 
-            color: var(--text-main); 
-            padding: 20px; 
-            margin: 0;
-        }
-        .container { 
-            max-width: 950px; 
-            margin: 40px auto; 
-            background: var(--bg-card); 
-            padding: 30px; 
-            border-radius: 12px; 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); 
-        }
-        h1 { color: var(--accent); margin-top: 0; font-size: 24px; border-bottom: 2px solid #334155; padding-bottom: 10px; }
-        .btn-group { margin: 20px 0; display: flex; gap: 10px; flex-wrap: wrap; }
-        button { 
-            background: var(--info); 
-            color: white; 
-            border: none; 
-            padding: 12px 24px; 
-            border-radius: 6px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            transition: all 0.2s ease;
-        }
-        button:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
-        button:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; }
-        button.danger { background: var(--danger); }
-        .pkg-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-            gap: 12px; 
-            margin: 20px 0; 
-            max-height: 400px; 
-            overflow-y: auto; 
-            background: var(--bg-main); 
-            padding: 15px; 
-            border-radius: 6px; 
-            border: 1px solid #334155;
-        }
-        .pkg-item { 
-            display: flex; 
-            flex-direction: column;
-            background: #1e293b; 
-            padding: 10px 12px; 
-            border-radius: 4px; 
-            border-left: 3px solid var(--accent);
-        }
-        .pkg-row { display: flex; align-items: flex-start; }
-        .pkg-item input { margin-right: 10px; margin-top: 3px; cursor: pointer; }
-        .pkg-item label { font-size: 13px; font-family: monospace; word-break: break-all; cursor: pointer; }
-        .pkg-desc { font-size: 11px; color: #94a3b8; margin-top: 4px; margin-left: 23px; }
-        #console { 
-            background: #000000; 
-            color: var(--success); 
-            font-family: 'Courier New', Courier, monospace; 
-            padding: 15px; 
-            border-radius: 6px; 
-            height: 240px; 
-            overflow-y: auto; 
-            white-space: pre-wrap; 
-            margin-top: 20px; 
-            border: 1px solid #334155;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-        .section-title { font-size: 16px; margin-top: 25px; color: #94a3b8; font-weight: 600; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Web Debloater</title>
+<style>
+:root{
+  --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a; --text:#e6e8ee; --mut:#8b93a5;
+  --acc:#5b8cff; --ok:#3ecf8e; --warn:#f5b84a; --bad:#ff5d6c; --r:10px;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:20;flex-wrap:wrap}
+header h1{font-size:17px;margin:0;font-weight:650;letter-spacing:.2px}
+.pill{font-size:12px;padding:3px 10px;border-radius:99px;border:1px solid var(--line);color:var(--mut)}
+.pill.on{color:var(--ok);border-color:#285d45;background:#12261d}
+.spacer{flex:1}
+main{padding:18px 20px 40px;max-width:1400px;margin:0 auto}
+.btn{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer;font:inherit}
+.btn:hover:not(:disabled){border-color:#3a4150;background:#232834}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.danger{background:#3a1a20;border-color:#6b2a35;color:#ffb4bc}
+.btn.danger:hover:not(:disabled){background:#4a2028}
+.btn.sm{padding:4px 9px;font-size:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.hero{text-align:center;padding:48px 20px}
+.hero h2{margin:0 0 8px;font-size:22px}
+.hero p{color:var(--mut);max-width:620px;margin:6px auto}
+.steps{text-align:left;max-width:620px;margin:18px auto;color:var(--mut)}
+.steps li{margin:6px 0}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
+code{background:var(--panel2);padding:1px 5px;border-radius:4px}
+.banner{padding:10px 14px;border-radius:8px;margin-bottom:14px;border:1px solid}
+.banner.err{background:#2a1418;border-color:#6b2a35;color:#ffb4bc}
+.banner.info{background:#13203a;border-color:#27427a;color:#b6ccff}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:14px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.stat b{display:block;font-size:22px;font-weight:650}
+.stat span{color:var(--mut);font-size:12px}
+.devinfo{display:flex;gap:22px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.devinfo div small{display:block;color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.6px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+input[type=search],input[type=text],select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font:inherit}
+input[type=search]{min-width:240px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chip{border:1px solid var(--line);background:var(--panel);border-radius:99px;padding:4px 11px;cursor:pointer;color:var(--mut);font-size:12px}
+.chip.active{background:#1a2744;border-color:var(--acc);color:#cfdcff}
+.chip i{font-style:normal;opacity:.7;margin-left:4px}
+.actionbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);margin-bottom:10px;position:sticky;top:61px;z-index:10}
+.actionbar .cnt{color:var(--mut);margin-right:6px}
+.progress{height:3px;background:var(--line);border-radius:2px;overflow:hidden;margin-bottom:10px;display:none}
+.progress div{height:100%;width:0;background:var(--acc);transition:width .15s}
+.tablewrap{border:1px solid var(--line);border-radius:var(--r);overflow:auto;max-height:68vh;background:var(--panel)}
+table{border-collapse:collapse;width:100%}
+th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{position:sticky;top:0;background:var(--panel2);font-size:12px;color:var(--mut);font-weight:600;cursor:pointer;user-select:none;z-index:2}
+th.nosort{cursor:default}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:#1b2029}
+tbody tr.sel{background:#16213a}
+td.app{white-space:normal;min-width:260px}
+td.app b{display:block;font-weight:600}
+td.app small{color:var(--mut)}
+.badge{display:inline-block;font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);margin-right:4px;color:var(--mut)}
+.b-ok{color:var(--ok);border-color:#285d45}
+.b-warn{color:var(--warn);border-color:#6b5320}
+.b-bad{color:var(--bad);border-color:#6b2a35}
+.b-acc{color:#9db9ff;border-color:#2c4686}
+.empty{padding:40px;text-align:center;color:var(--mut)}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(480px,100%);background:var(--panel);border-left:1px solid var(--line);transform:translateX(100%);transition:transform .18s;z-index:40;display:flex;flex-direction:column}
+.drawer.open{transform:none}
+.drawer header{position:static;border:0;padding:14px 16px}
+.drawer .body{padding:0 16px 16px;overflow:auto;flex:1}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;margin:10px 0}
+.kv dt{color:var(--mut)} .kv dd{margin:0;word-break:break-all}
+.perms{max-height:200px;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:6px}
+.perms div{font-size:12px;padding:1px 0}
+.log{margin-top:16px}
+.log summary{cursor:pointer;color:var(--mut)}
+#logbox{height:220px;overflow:auto;background:#0a0c10;border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:8px;white-space:pre-wrap}
+.l-ok{color:var(--ok)} .l-err{color:var(--bad)} .l-cmd{color:#9db9ff} .l-warn{color:var(--warn)}
+dialog{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:0;max-width:560px;width:calc(100% - 32px)}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+dialog .in{padding:18px}
+dialog h3{margin:0 0 10px}
+dialog .list{max-height:240px;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px;margin:10px 0}
+dialog .list div{padding:2px 0;font-size:12px}
+dialog menu{display:flex;gap:8px;justify-content:flex-end;padding:0;margin:14px 0 0}
+label.chk{display:flex;gap:6px;align-items:center;color:var(--mut)}
+.hidden{display:none!important}
+</style>
 </head>
 <body>
+<header>
+  <h1>Web Debloater</h1>
+  <span id="status" class="pill">Not connected</span>
+  <span class="spacer"></span>
+  <button class="btn" id="btnBackup" disabled>Backup <span id="bkCount"></span></button>
+  <button class="btn" id="btnRescan" disabled>Rescan</button>
+  <button class="btn" id="btnDisconnect" disabled>Disconnect</button>
+  <button class="btn primary" id="btnConnect">Connect device</button>
+</header>
 
-<div class="container">
-    <h1>Realme UI Unified WebADB Advanced Debloater</h1>
-    <p>Device Connectivity Status: <span id="status" style="color: var(--danger); font-weight: bold;">Disconnected</span></p>
-    
-    <div class="btn-group">
-        <button id="btnConnect">1. Connect Phone via WebUSB</button>
-        <button id="btnScan" disabled>2. Parse OPlus Repository Database</button>
-        <button id="btnDebloat" class="danger" disabled>3. Execute 95-Package Purge Loop</button>
+<main>
+  <div id="banner"></div>
+
+  <section id="hero" class="card hero">
+    <h2>Debloat your Realme / ColorOS / OxygenOS phone from the browser</h2>
+    <p>Connects over WebUSB (no ADB install), scans every package on the device and shows what each one is, where it came from, how big it is and whether it is safe to touch.</p>
+    <ol class="steps">
+      <li>Enable <b>USB debugging</b> in Developer options and plug the phone in.</li>
+      <li>On Windows, close any running ADB server first: <code>adb kill-server</code>. Only one program can own the USB interface.</li>
+      <li>Use Chrome or Edge, click <b>Connect device</b>, pick the phone, then tap <b>Allow</b> on the phone's debugging prompt.</li>
+    </ol>
+  </section>
+
+  <section id="app" class="hidden">
+    <div class="card devinfo" id="devinfo"></div>
+    <div class="grid" id="stats"></div>
+
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="Search name or package…">
+      <select id="originSel"></select>
+      <span class="spacer"></span>
+      <button class="btn sm" id="selBloat">Select bloat list</button>
+      <button class="btn sm" id="selBloatAll">…incl. caution</button>
+      <button class="btn sm" id="selVisible">Select visible</button>
+      <button class="btn sm" id="selClear">Clear</button>
+    </div>
+    <div class="chips" id="chips"></div>
+
+    <div class="actionbar">
+      <span class="cnt"><b id="selCount">0</b> selected</span>
+      <button class="btn danger" id="aRemove" disabled>Remove (user 0)</button>
+      <button class="btn" id="aDisable" disabled>Disable</button>
+      <button class="btn" id="aRestore" disabled>Restore / enable</button>
+      <label class="chk"><input type="checkbox" id="fbDisable" checked> if remove fails, try disable</label>
+      <span class="spacer"></span>
+      <button class="btn sm" id="aExport">Export list</button>
+      <button class="btn sm" id="aMarketOff">Kill App Market</button>
+      <button class="btn sm" id="aMarketOn">Restore App Market</button>
+      <button class="btn sm" id="aReboot">Reboot</button>
+    </div>
+    <div class="progress" id="prog"><div></div></div>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr id="thead"></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div id="empty" class="empty hidden">No packages match.</div>
     </div>
 
-    <div class="section-title">Target Bloatware Manifest (Realme / Oppo / OnePlus)</div>
-    <div class="pkg-grid" id="pkgContainer">
-        <div style="color: #64748b; font-size: 13px; padding: 10px;">Connect your phone to populate the unified system packages...</div>
+  </section>
+
+  <details class="log" open>
+    <summary>Activity log &amp; shell</summary>
+    <div id="logbox" class="mono"></div>
+    <div class="toolbar" style="margin-top:8px">
+      <input type="text" id="cmd" class="mono" style="flex:1" placeholder="adb shell command, e.g. pm list packages -d">
+      <button class="btn" id="cmdRun">Run</button>
     </div>
+  </details>
+</main>
 
-    <div class="section-title">Live Execution Terminal Wrapper</div>
-    <div id="console">Ready. Ensure USB Debugging is running on your device, plug in your phone, and hit Connect...</div>
-</div>
+<aside class="drawer" id="drawer">
+  <header>
+    <h1 id="dTitle" style="font-size:15px">App</h1>
+    <span class="spacer"></span>
+    <button class="btn sm" id="dClose">Close</button>
+  </header>
+  <div class="body" id="dBody"></div>
+</aside>
 
-<script src="app.js"></script>
+<dialog id="dlg"><form method="dialog" class="in">
+  <h3 id="dlgTitle"></h3><div id="dlgBody"></div>
+  <menu><button class="btn" value="cancel">Cancel</button><button class="btn primary" value="ok" id="dlgOk">Confirm</button></menu>
+</form></dialog>
+
+<dialog id="bk"><div class="in">
+  <h3>Removed / disabled backup</h3>
+  <div style="color:var(--mut)">Stored in this browser. Export it to keep a copy (same one-package-per-line format as your .bat backup).</div>
+  <div class="list" id="bkList"></div>
+  <menu>
+    <button class="btn sm" id="bkImport">Import…</button>
+    <button class="btn sm" id="bkExport">Export</button>
+    <button class="btn sm danger" id="bkClear">Clear</button>
+    <button class="btn sm primary" id="bkRestoreAll">Restore all</button>
+    <button class="btn sm" id="bkClose">Close</button>
+  </menu>
+  <input type="file" id="bkFile" accept=".txt,.json" class="hidden">
+</div></dialog>
+
+<script type="module">
+/* ============================================================
+   Known package data (taken from your debloat.bat)
+   ============================================================ */
+const BLOAT_TXT = `com.glance.internet:Glance Lockscreen
+com.realmestore.app:Realme Store
+com.coloros.securitykeyboard:ColorOS Security Keyboard
+com.coloros.video:ColorOS Video
+com.coloros.wifibackuprestore:ColorOS WiFi Backup Restore
+com.coloros.activation:ColorOS Activation
+com.coloros.athena:ColorOS Athena
+com.coloros.backuprestore:ColorOS Backup Restore
+com.applovin.array.apphub.vincere:Vincere
+com.realmecomm.app:Realme Community
+com.oppo.bttestmode:Oppo BT Test Mode
+com.oppo.operationManual:Oppo Operation Manual
+com.oppo.qualityprotect:Oppo Quality Protect
+com.oppo.sos:Oppo SOS
+com.heytap.cloud:HeyTap Cloud
+com.heytap.mcs:HeyTap MCS
+com.heytap.openid:HeyTap OpenID
+com.heytap.browser:HeyTap Browser
+com.oppo.quicksearchbox:Oppo Quick Search Box
+com.microsoft.appmanager:Windows Link
+com.oplus.crashbox:Oplus Crashbox
+com.oplus.onetrace:Oplus Onetrace
+com.coloros.logkit:ColorOS Logkit
+com.heytap.usercenter:HeyTap User Center
+com.heytap.synergy:HeyTap Synergy
+com.oplus.omoji:Oplus Omoji
+com.coloros.phonemanager:ColorOS Phone Manager
+com.heytap.quickgame:HeyTap QuickGame
+com.oplus.synergy:Oplus Synergy
+com.google.android.apps.magazines:Google Magazines
+com.realme.link:Realme Link
+com.coloros.oshare:ColorOS Oshare
+com.realme.securitycheck:Realme Security Check
+com.realme.wellbeing:Realme Wellbeing
+com.coloros.onekeylockscreen:ColorOS One Key Lock Screen
+com.oplus.apprecover:Oplus App Recover
+com.facebook.appmanager:Facebook App Manager
+com.facebook.services:Facebook Services
+com.facebook.system:Facebook System
+com.facebook.katana:Facebook
+com.heytap.pictorial:HeyTap Pictorial
+com.nearme.atlas:Nearme Atlas
+com.nearme.statistics.rom:Nearme Statistics
+com.heytap.market:HeyTap Market
+com.android.bookmarkprovider:Android Bookmark Provider
+com.android.email.partnerprovider:Android Email Partner Provider
+com.android.providers.partnerbookmarks:Android Partner Bookmarks Provider
+com.google.android.keep:Google Keep
+com.google.android.apps.nbu.files:Google Files
+com.google.android.feedback:Google Feedback
+com.netflix.mediaclient:Netflix
+com.netflix.partner.activation:Netflix Partner Activation
+com.redteamobile.roaming:Redtea Mobile Roaming
+com.google.android.apps.nbu.paisa.user:Google Pay
+com.finshell.fin:Finshell
+com.google.android.youtube:YouTube
+com.google.android.apps.youtube.music:YouTube Music
+com.google.android.apps.tachyon:Google Duo
+com.next.innovation.takatak:TakaTak
+in.mohalla.video:Mohalla Video
+com.eterno.shortvideos:Short Videos
+com.google.android.apps.podcasts:Google Podcasts
+com.phonepe.app:PhonePe
+in.mohalla.sharechat:ShareChat
+in.amazon.mShop.android.shopping:Amazon Shopping
+com.eterno:Eterno
+com.os.docvault:OS DocVault
+com.google.android.apps.subscriptions.red:Google Subscriptions
+com.google.android.videos:Google Videos
+com.snapchat.android:Snapchat
+com.spotify.music:Spotify
+com.google.android.apps.googleassistant:Google Assistant
+com.coloros.note:ColorOS Note
+com.oplus.videoeditor:Oplus Video Editor
+com.cardfeed.video_public:CardFeed Video Public
+com.block.juggle:Block Juggle
+com.byjus.thelearningapp:Byjus Learning App
+com.king.candycrushsaga:Candy Crush Saga
+com.linkedin.android:LinkedIn
+com.jio.media.ondemand:Jio Media On Demand
+com.fullmetalgamedev.animalraceflyingzoo:Animal Race Flying Zoo
+com.katanlabs.bridgerunio:Bridge Run
+com.katanlabs.bubblepop:Bubble Pop
+com.katanlabs.sandballsclassic:Sand Balls Classic
+com.goods.master3d.triple.puzzle:Master 3D Triple Puzzle
+com.katanlabs.wordconnectwondersofview:Word Connect Wonders
+com.agoda.mobile.consumer:Agoda
+com.katanlabs.matchballgame:Match Ball Game
+com.katanlabs.worm.ioeatemall:Worm.io Eat Them All
+com.katanlabs.tilematchpuzzlemaster:Tile Match Puzzle Master
+com.vitastudio.mahjong:Mahjong
+com.oakever.tiletrip:Tile Trip
+com.nebula.mahjongtile:Mahjong Tile
+com.oplus.stdsp:StdSP Core
+com.taboola.scoop:Wallpaper Carousel`;
+
+const IMPORTANT_TXT = `com.coloros.securitykeyboard:ColorOS Security Keyboard
+com.oplus.videoeditor:Oplus Video Editor
+com.coloros.encryption:ColorOS Encryption
+com.coloros.backuprestore:ColorOS Backup Restore
+com.coloros.wifibackuprestore:ColorOS WiFi Backup Restore
+com.coloros.oshare:ColorOS OShare
+com.coloros.video:ColorOS Video
+com.coloros.note:ColorOS Note
+com.coloros.onekeylockscreen:ColorOS One Key Lock Screen
+com.realme.securitycheck:Realme Security Check
+com.oplus.apprecover:Oplus App Recover
+com.os.docvault:OS DocVault
+com.wapi.wapicertmanage:WAPI Cert Manage
+com.mediatek.omacp:MediaTek OMA-CP
+com.android.bookmarkprovider:Android Bookmark Provider
+com.android.providers.partnerbookmarks:Android Partner Bookmarks Provider
+com.android.email.partnerprovider:Android Email Partner Provider`;
+
+const parseKV = t => Object.fromEntries(t.split('\n').filter(Boolean).map(l => { const i = l.indexOf(':'); return [l.slice(0, i), l.slice(i + 1)]; }));
+const BLOAT = parseKV(BLOAT_TXT);
+const IMPORTANT = parseKV(IMPORTANT_TXT);
+
+// Packages that almost certainly break the phone (or Play/Google services) if removed.
+const CORE_RES = [
+  /^android$/, /^com\.android\.(systemui|phone|settings|server\.telecom|packageinstaller|permissioncontroller|bluetooth|nfc|shell|keychain|certinstaller|location|wifi.*|networkstack.*|webview|vending|dialer|incallui|contacts|mms|se|inputmethod\.latin|providers\.(settings|telephony|contacts|media|downloads|calendar|userdictionary|blockednumber))$/,
+  /^com\.google\.android\.(gms|gsf|webview|packageinstaller|permissioncontroller|inputmethod\.latin|ext\.services|ext\.shared)$/,
+  /^com\.(oplus|coloros|oppo)\.launcher$/, /^com\.oplus\.(battery|safecenter)$/, /^com\.coloros\.(safecenter|systemui)$/,
+];
+const isCore = p => CORE_RES.some(r => r.test(p));
+
+const PRETTY_SKIP = new Set(['app', 'android', 'apps', 'mobile', 'client', 'main']);
+function prettyName(pkg) {
+  if (BLOAT[pkg]) return BLOAT[pkg];
+  if (IMPORTANT[pkg]) return IMPORTANT[pkg];
+  let parts = pkg.split('.');
+  if (['com', 'org', 'in', 'net', 'io'].includes(parts[0])) parts = parts.slice(1);
+  while (parts.length > 1 && PRETTY_SKIP.has(parts[parts.length - 1])) parts.pop();
+  return parts.slice(-2).map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+}
+function originOf(pkg) {
+  if (/^com\.(coloros|oplus|oppo|heytap|realme|nearme|finshell|redteamobile)\b/.test(pkg)) return 'OPPO / Realme';
+  if (pkg === 'android' || pkg.startsWith('com.android.')) return 'Android (AOSP)';
+  if (pkg.startsWith('com.google.')) return 'Google';
+  if (/^com\.(mediatek|qualcomm|qti)\b|^org\.codeaurora/.test(pkg) || pkg.startsWith('vendor.')) return 'Chipset';
+  if (/^com\.(facebook|microsoft|netflix|linkedin|snapchat|spotify|amazon)\b|^in\.amazon/.test(pkg)) return 'Pre-installed 3rd party';
+  return 'Other';
+}
+const SAFE_PKG = /^[A-Za-z0-9_.]+$/;
+
+/* ============================================================
+   State
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+let adb = null, device = null, apps = [], devInfo = {};
+const selected = new Set();
+const ui = { q: '', filter: 'all', origin: 'all', sortKey: 'name', sortDir: 1 };
+
+/* ============================================================
+   Library loading (preloaded so WebUSB keeps its user gesture)
+   ============================================================ */
+const libsPromise = (async () => {
+  const [A, W, C] = await Promise.all([
+    import('https://esm.sh/@yume-chan/adb@2'),
+    import('https://esm.sh/@yume-chan/adb-daemon-webusb@2'),
+    import('https://esm.sh/@yume-chan/adb-credential-web@2'),
+  ]);
+  return { Adb: A.Adb, Transport: A.AdbDaemonTransport, Manager: W.AdbDaemonWebUsbDeviceManager, Cred: C.default ?? C.AdbWebCredentialStore };
+})();
+libsPromise.catch(e => { showBanner('err', 'Could not load the ADB library from esm.sh (' + esc(e.message) + '). Check your internet connection and reload.'); });
+
+/* ============================================================
+   Logging / helpers
+   ============================================================ */
+function log(msg, cls = '') {
+  const b = $('#logbox');
+  const d = document.createElement('div'); if (cls) d.className = cls; d.textContent = msg;
+  b.appendChild(d); b.scrollTop = b.scrollHeight;
+}
+function showBanner(kind, html) { $('#banner').innerHTML = html ? `<div class="banner ${kind}">${html}</div>` : ''; }
+function setStatus(txt, on) { const s = $('#status'); s.textContent = txt; s.classList.toggle('on', !!on); }
+function progress(p) { const w = $('#prog'); w.style.display = p == null ? 'none' : 'block'; if (p != null) w.firstElementChild.style.width = (p * 100) + '%'; }
+function download(name, text, type = 'text/plain') {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+function confirmBox({ title, html, ok = 'Confirm', danger = false }) {
+  return new Promise(res => {
+    const d = $('#dlg'); $('#dlgTitle').textContent = title; $('#dlgBody').innerHTML = html;
+    const b = $('#dlgOk'); b.textContent = ok; b.className = 'btn ' + (danger ? 'danger' : 'primary');
+    d.returnValue = 'cancel'; d.onclose = () => res(d.returnValue === 'ok'); d.showModal();
+  });
+}
+const fmtSize = n => n == null ? '—' : n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : n > 1024 ? Math.round(n / 1024) + ' KB' : n + ' B';
+
+/* ============================================================
+   ADB shell (serialised)
+   ============================================================ */
+let chain = Promise.resolve();
+function sh(cmd, quiet = false) {
+  const run = async () => {
+    if (!adb) throw new Error('Not connected');
+    if (!quiet) log('$ ' + cmd, 'l-cmd');
+    const p = adb.subprocess;
+    let out;
+    if (p.noneProtocol?.spawnWaitText) out = await p.noneProtocol.spawnWaitText(cmd);
+    else if (p.shellProtocol?.spawnWaitText) { const r = await p.shellProtocol.spawnWaitText(cmd); out = r.stdout + (r.stderr || ''); }
+    else if (p.spawnAndWaitLegacy) { const r = await p.spawnAndWaitLegacy(cmd); out = typeof r === 'string' ? r : new TextDecoder().decode(r.stdout ?? r); }
+    else throw new Error('Unsupported ADB library version (no shell API found)');
+    return String(out).replace(/\r/g, '');
+  };
+  chain = chain.then(run, run);
+  return chain;
+}
+
+/* ============================================================
+   Connect / disconnect
+   ============================================================ */
+async function connect() {
+  log('Connect clicked', 'l-cmd');
+  if (!('usb' in navigator)) { showBanner('err', 'This browser has no WebUSB. Use Chrome, Edge or another Chromium browser. If you opened this as a file and it still fails, serve the folder with <code>python -m http.server</code> and open <code>http://localhost:8000</code>.'); return; }
+  let L; try { L = await libsPromise; log('ADB library loaded', 'l-ok'); } catch (e) { log('ADB library failed to load: ' + e.message, 'l-err'); return; }
+  const manager = L.Manager.BROWSER;
+  log('Opening the USB device picker…', 'l-cmd');
+  if (!manager) { showBanner('err', 'WebUSB is not available in this context (needs a secure context: https:// or localhost).'); return; }
+  showBanner('', '');
+  try {
+    const dev = await manager.requestDevice();
+    if (!dev) { log('No device selected', 'l-warn'); return; }
+    log('Device chosen, opening USB…', 'l-cmd');
+    setStatus('Opening USB…');
+    let connection;
+    try { connection = await dev.connect(); }
+    catch (e) {
+      showBanner('err', 'Could not claim the USB interface: ' + esc(e.message) + '<br>Run <code>adb kill-server</code> (and close Android Studio / scrcpy / other ADB tools), then unplug and re-plug the phone and try again.');
+      setStatus('Not connected'); return;
+    }
+    setStatus('Waiting for “Allow USB debugging” on the phone…');
+    log('Authenticating — approve the prompt on your phone', 'l-warn');
+    log(`USB interface claimed (${dev.name ?? 'device'}, serial ${dev.serial})`, 'l-ok');
+    try { // log every packet the phone sends back (CNXN / AUTH / ...)
+      const dec = c => typeof c === 'number' ? String.fromCharCode(c & 255, (c >> 8) & 255, (c >> 16) & 255, (c >>> 24) & 255) : String(c);
+      const rawReadable = connection.readable;
+      connection = { readable: rawReadable.pipeThrough(new TransformStream({ transform(pk, ctl) { log(`◀ phone sent ${dec(pk.command)} (${pk.payload?.length ?? 0} bytes)`, 'l-ok'); ctl.enqueue(pk); } })), writable: connection.writable };
+    } catch (e) { log('Packet logging unavailable: ' + e.message, 'l-warn'); }
+    const baseStore = new L.Cred('Web Debloater');
+    const store = new Proxy(baseStore, { get(t, k) { const v = t[k]; if (typeof v !== 'function') return v; return (...a) => { log('Auth: key store call → ' + String(k), 'l-cmd'); return v.apply(t, a); }; } });
+    log('Sent CONNECT to the phone; waiting for its reply (up to 45 s)…', 'l-cmd');
+    const authP = L.Transport.authenticate({ serial: dev.serial, connection, credentialStore: store });
+    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('TIMEOUT')), 45000));
+    let transport;
+    try { transport = await Promise.race([authP, timeout]); }
+    catch (e) {
+      if (e.message === 'TIMEOUT') {
+        showBanner('err', '<b>The phone never answered.</b> It is not showing the USB-debugging prompt, so the ADB handshake is not reaching it.<br>Reload this page, then check: (1) <code>adb kill-server</code> and nothing else is using ADB, (2) the phone shows <b>USB debugging</b> ON and USB mode is <b>File transfer</b>, (3) Developer options → <b>Revoke USB debugging authorizations</b>, (4) on Realme/ColorOS also turn ON <b>USB debugging (Security settings)</b> and turn OFF <b>Disable permission monitoring</b> if present, (5) try a different cable/port.');
+        log('Timed out waiting for the phone. Reload the page before retrying.', 'l-err'); setStatus('Not connected'); return;
+      }
+      throw e;
+    }
+    adb = new L.Adb(transport); device = dev;
+    adb.disconnected?.then(onDisconnected, onDisconnected);
+    log('Connected: ' + dev.serial, 'l-ok');
+    try { log('Shell test: ' + (await sh('echo shell-ok')).trim(), 'l-ok'); } catch (e) { log('Shell test failed: ' + e.message, 'l-err'); }
+    $('#hero').classList.add('hidden'); $('#app').classList.remove('hidden');
+    ['btnDisconnect', 'btnRescan', 'btnBackup'].forEach(i => $('#' + i).disabled = false);
+    $('#btnConnect').disabled = true;
+    await scan();
+  } catch (e) {
+    if (e?.name === 'NotFoundError') { setStatus('Not connected'); return; } // picker cancelled
+    log('Connect failed: ' + e.message, 'l-err');
+    showBanner('err', 'Connection failed: ' + esc(e.message));
+    setStatus('Not connected'); adb = null;
+  }
+}
+function onDisconnected() {
+  if (!adb) return; adb = null; device = null;
+  setStatus('Disconnected'); log('Device disconnected', 'l-warn');
+  ['btnDisconnect', 'btnRescan'].forEach(i => $('#' + i).disabled = true);
+  $('#btnConnect').disabled = false; updateActionButtons();
+}
+async function disconnect() { try { await adb?.close(); } catch { } onDisconnected(); }
+
+/* ============================================================
+   Scanning
+   ============================================================ */
+const pkgSet = out => new Set([...out.matchAll(/^package:([\w.]+)/gm)].map(m => m[1]));
+
+function parseFullList(out) {
+  const res = new Map();
+  for (const raw of out.split('\n')) {
+    if (!raw.startsWith('package:')) continue;
+    const line = raw.slice(8).trim();
+    const sp = line.search(/\s/);
+    const head = sp < 0 ? line : line.slice(0, sp), rest = sp < 0 ? '' : line.slice(sp + 1);
+    const eq = head.lastIndexOf('=');
+    const path = eq >= 0 ? head.slice(0, eq) : null, pkg = eq >= 0 ? head.slice(eq + 1) : head;
+    const kv = {}; for (const m of rest.matchAll(/(\w+):(\S+)/g)) kv[m[1]] = m[2];
+    res.set(pkg, { path, uid: kv.uid ?? null, vc: kv.versionCode != null ? Number(kv.versionCode) : null });
+  }
+  return res;
+}
+function parseInstallers(out) {
+  const m = new Map();
+  for (const x of out.matchAll(/^package:([\w.]+)\s+installer=(\S+)/gm)) m.set(x[1], x[2] === 'null' ? null : x[2]);
+  return m;
+}
+const CORE_PROPS = ['ro.product.brand', 'ro.product.model', 'ro.product.device', 'ro.build.version.release', 'ro.build.version.sdk', 'ro.build.display.id', 'ro.build.version.security_patch'];
+
+async function scan() {
+  if (!adb) return;
+  setStatus('Scanning…'); progress(0.05); $('#btnRescan').disabled = true;
+  try {
+    const pOut = await sh(`for p in ${CORE_PROPS.join(' ')}; do echo "$p=$(getprop $p)"; done`);
+    devInfo = Object.fromEntries(pOut.split('\n').filter(l => l.includes('=')).map(l => { const i = l.indexOf('='); return [l.slice(0, i), l.slice(i + 1)]; }));
+    devInfo.serial = device?.serial;
+    const df = (await sh('df -k /data', true)).trim().split('\n').pop().trim().split(/\s+/);
+    if (df.length >= 4) devInfo.free = Number(df[df.length - 3]) * 1024, devInfo.total = Number(df[df.length - 5]) * 1024;
+    progress(0.15);
+
+    let full = await sh('pm list packages -f -U --show-versioncode -u');
+    if (!/^package:/m.test(full)) full = await sh('pm list packages -f -u');
+    const base = parseFullList(full);
+    progress(0.3);
+    const present = pkgSet(await sh('pm list packages', true));
+    const sys = pkgSet(await sh('pm list packages -s -u', true));
+    const disabled = pkgSet(await sh('pm list packages -d', true));
+    progress(0.4);
+    const inst = parseInstallers(await sh('pm list packages -i -u', true));
+    let launchers = null;
+    const lout = await sh('cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.LAUNCHER', true);
+    const lset = new Set([...lout.matchAll(/^\s*([\w.]+)\/\S+/gm)].map(m => m[1]));
+    if (lset.size) launchers = lset; else log('Launcher query unsupported on this Android version; "has launcher icon" unavailable', 'l-warn');
+    progress(0.5);
+
+    apps = [...base].map(([pkg, b]) => {
+      const x = {
+        pkg, path: b.path, uid: b.uid, vc: b.vc, system: sys.has(pkg),
+        state: !present.has(pkg) ? 'removed' : disabled.has(pkg) ? 'disabled' : 'enabled',
+        installer: inst.get(pkg) ?? null, size: null, launcher: launchers ? launchers.has(pkg) : null,
+        name: prettyName(pkg), origin: originOf(pkg), bloat: pkg in BLOAT, caution: pkg in IMPORTANT, core: isCore(pkg),
+      };
+      x.known = pkg in BLOAT || pkg in IMPORTANT; x.lc = (x.name + ' ' + pkg).toLowerCase(); return x;
+    });
+
+    // APK sizes in batches
+    const withPath = apps.filter(a => a.path && /^[\w.\/=~+@-]+$/.test(a.path));
+    for (let i = 0; i < withPath.length; i += 40) {
+      const chunk = withPath.slice(i, i + 40);
+      const out = await sh(`stat -c '%s %n' ${chunk.map(a => `'${a.path}'`).join(' ')} 2>/dev/null`, true);
+      for (const l of out.split('\n')) {
+        const m = l.match(/^(\d+) (.+)$/); if (!m) continue;
+        const a = chunk.find(c => c.path === m[2]); if (a) a.size = Number(m[1]);
+      }
+      progress(0.5 + 0.5 * Math.min(1, (i + 40) / withPath.length));
+    }
+    for (const p of [...selected]) if (!apps.find(a => a.pkg === p)) selected.delete(p);
+    setStatus(`${devInfo['ro.product.brand'] ?? ''} ${devInfo['ro.product.model'] ?? ''}`.trim() || 'Connected', true);
+    log(`Scan complete: ${apps.length} packages`, 'l-ok');
+    renderAll();
+  } catch (e) {
+    log('Scan failed: ' + e.message, 'l-err'); showBanner('err', 'Scan failed: ' + esc(e.message)); setStatus('Connected', true);
+  } finally { progress(null); $('#btnRescan').disabled = !adb; }
+}
+
+async function refreshStates() {
+  const present = pkgSet(await sh('pm list packages', true));
+  const disabled = pkgSet(await sh('pm list packages -d', true));
+  for (const a of apps) a.state = !present.has(a.pkg) ? 'removed' : disabled.has(a.pkg) ? 'disabled' : 'enabled';
+  renderAll();
+}
+
+/* ============================================================
+   Backup store
+   ============================================================ */
+const BK_KEY = 'webdebloat.backup.v1';
+function bkLoad() { try { return JSON.parse(localStorage.getItem(BK_KEY) || '[]'); } catch { return []; } }
+function bkSave(l) { try { localStorage.setItem(BK_KEY, JSON.stringify(l)); } catch { } $('#bkCount').textContent = l.length ? `(${l.length})` : ''; }
+function bkAdd(pkg, action) { const l = bkLoad().filter(x => x.pkg !== pkg); l.push({ pkg, action, t: Date.now() }); bkSave(l); }
+function bkDel(pkg) { bkSave(bkLoad().filter(x => x.pkg !== pkg)); }
+
+/* ============================================================
+   Actions
+   ============================================================ */
+async function runAction(kind, pkgs) {
+  pkgs = pkgs.filter(p => SAFE_PKG.test(p));
+  if (!pkgs.length || !adb) return;
+  const labels = { remove: 'Remove', disable: 'Disable', restore: 'Restore', stop: 'Force stop', clear: 'Clear data' };
+  const coreHit = pkgs.filter(isCore), cautionHit = pkgs.filter(p => p in IMPORTANT);
+  if (kind === 'remove' || kind === 'disable' || kind === 'clear') {
+    let warn = '';
+    if (coreHit.length) warn += `<p class="l-err"><b>Likely core system packages selected:</b> ${coreHit.map(esc).join(', ')}.<br>Removing these can cause bootloops or break calls, Play Store or the launcher.</p>`;
+    if (cautionHit.length) warn += `<p class="l-warn">${cautionHit.length} package(s) are on your “important system apps” list (e.g. Notes, Security Keyboard, OShare).</p>`;
+    const list = pkgs.map(p => { const a = apps.find(x => x.pkg === p); return `<div>${esc(a?.name ?? p)} <span style="color:var(--mut)">${esc(p)}</span></div>`; }).join('');
+    const ok = await confirmBox({ title: `${labels[kind]} ${pkgs.length} app${pkgs.length > 1 ? 's' : ''}?`, html: warn + `<div class="list">${list}</div><div style="color:var(--mut)">Removal uses <code>pm uninstall --user 0</code>: the APK stays on the system partition and can be restored from here or by a factory reset.</div>`, ok: labels[kind], danger: coreHit.length > 0 || kind === 'remove' });
+    if (!ok) return;
+  }
+  let okN = 0, failN = 0;
+  for (let i = 0; i < pkgs.length; i++) {
+    const p = pkgs[i]; progress(i / pkgs.length);
+    try {
+      if (kind === 'remove') {
+        const r = (await sh(`pm uninstall --user 0 ${p}`)).trim();
+        if (/Success/i.test(r)) { log(`[REMOVED] ${p}`, 'l-ok'); bkAdd(p, 'removed'); okN++; }
+        else if ($('#fbDisable').checked) {
+          const d = (await sh(`pm disable-user --user 0 ${p}`)).trim();
+          if (/disabled/i.test(d)) { log(`[DISABLED] ${p} (remove refused)`, 'l-ok'); bkAdd(p, 'disabled'); okN++; }
+          else { log(`[FAILED] ${p}: ${r || d}`, 'l-err'); failN++; }
+        } else { log(`[FAILED] ${p}: ${r}`, 'l-err'); failN++; }
+      } else if (kind === 'disable') {
+        const d = (await sh(`pm disable-user --user 0 ${p}`)).trim();
+        if (/disabled/i.test(d)) { log(`[DISABLED] ${p}`, 'l-ok'); bkAdd(p, 'disabled'); okN++; } else { log(`[FAILED] ${p}: ${d}`, 'l-err'); failN++; }
+      } else if (kind === 'restore') {
+        await sh(`cmd package install-existing --user 0 ${p}`);
+        await sh(`pm enable --user 0 ${p}`);
+        await sh(`pm unsuspend --user 0 ${p}`, true);
+        log(`[RESTORED] ${p}`, 'l-ok'); bkDel(p); okN++;
+      } else if (kind === 'stop') { await sh(`am force-stop ${p}`); okN++; }
+      else if (kind === 'clear') { const r = await sh(`pm clear ${p}`); log(r.trim(), /Success/.test(r) ? 'l-ok' : 'l-err'); okN++; }
+    } catch (e) { log(`[ERROR] ${p}: ${e.message}`, 'l-err'); failN++; }
+  }
+  progress(1); setTimeout(() => progress(null), 300);
+  log(`${labels[kind]}: ${okN} succeeded, ${failN} failed`, failN ? 'l-warn' : 'l-ok');
+  try { await refreshStates(); } catch { }
+  if (kind !== 'stop') { for (const p of pkgs) selected.delete(p); }
+  renderAll(); if (drawerPkg) openDrawer(drawerPkg, false);
+}
+
+const MARKET = ['com.heytap.market', 'com.oplus.appmarket', 'com.oppo.market'];
+async function marketOff() {
+  if (!await confirmBox({ title: 'Disable Oppo / HeyTap App Market?', html: 'Force-stops, clears data, disables, suspends and removes the market packages (same as menu option 6 in your .bat).', ok: 'Disable', danger: true })) return;
+  for (const p of MARKET) { for (const c of [`am force-stop ${p}`, `pm clear ${p}`, `pm disable-user --user 0 ${p}`, `pm suspend --user 0 ${p}`, `pm uninstall --user 0 ${p}`]) await sh(c).catch(() => { }); bkAdd(p, 'removed'); }
+  log('App Market disabled/suspended', 'l-ok'); await refreshStates();
+}
+async function marketOn() { for (const p of MARKET) { for (const c of [`cmd package install-existing --user 0 ${p}`, `pm enable --user 0 ${p}`, `pm unsuspend --user 0 ${p}`]) await sh(c).catch(() => { }); bkDel(p); } log('App Market restored', 'l-ok'); await refreshStates(); }
+
+/* ============================================================
+   Rendering
+   ============================================================ */
+const FILTERS = [['all', 'All'], ['bloat', 'Bloat list'], ['caution', 'Caution'], ['core', 'Likely core'], ['user', 'User apps'], ['system', 'System apps'], ['disabled', 'Disabled'], ['removed', 'Removed'], ['nolaunch', 'No launcher icon']];
+const filterFns = {
+  all: () => true, bloat: a => a.bloat, caution: a => a.caution, core: a => a.core, user: a => !a.system, system: a => a.system,
+  disabled: a => a.state === 'disabled', removed: a => a.state === 'removed', nolaunch: a => a.launcher === false,
+};
+const COLS = [['name', 'App'], ['type', 'Type'], ['state', 'State'], ['tags', 'Flags'], ['origin', 'Origin'], ['vc', 'Version code'], ['size', 'APK size'], ['launcher', 'Launcher'], ['installer', 'Installer']];
+
+function visibleApps() {
+  const q = ui.q.trim().toLowerCase();
+  const f = filterFns[ui.filter];
+  const v = apps.filter(a => f(a) && (ui.origin === 'all' || a.origin === ui.origin) && (!q || a.lc.includes(q)));
+  const k = ui.sortKey, d = ui.sortDir;
+  const val = a => ({ name: a.name.toLowerCase(), type: a.system ? 1 : 0, state: a.state, tags: (a.core ? 4 : 0) + (a.caution ? 2 : 0) + (a.bloat ? 1 : 0), origin: a.origin, vc: a.vc ?? -1, size: a.size ?? -1, launcher: a.launcher == null ? -1 : +a.launcher, installer: a.installer ?? '' }[k]);
+  return v.sort((a, b) => { const x = val(a), y = val(b); return (x < y ? -1 : x > y ? 1 : 0) * d; });
+}
+function renderAll() { renderDevice(); renderStats(); renderChips(); renderOrigins(); renderHead(); renderRows(); updateActionButtons(); }
+
+function renderDevice() {
+  const d = devInfo, it = (k, v) => `<div><small>${k}</small>${esc(v || '—')}</div>`;
+  $('#devinfo').innerHTML = it('Device', `${d['ro.product.brand'] ?? ''} ${d['ro.product.model'] ?? ''}`) + it('Codename', d['ro.product.device']) +
+    it('Android', d['ro.build.version.release'] ? `${d['ro.build.version.release']} (SDK ${d['ro.build.version.sdk']})` : '') + it('Build', d['ro.build.display.id']) +
+    it('Security patch', d['ro.build.version.security_patch']) + it('Serial', d.serial) + (d.total ? it('/data free', `${fmtSize(d.free)} of ${fmtSize(d.total)}`) : '');
+}
+function renderStats() {
+  const c = f => apps.filter(f).length;
+  const s = (n, l) => `<div class="stat"><b>${n}</b><span>${l}</span></div>`;
+  const sz = apps.filter(a => a.bloat && a.state === 'enabled').reduce((t, a) => t + (a.size || 0), 0);
+  $('#stats').innerHTML = s(apps.length, 'packages found') + s(c(a => !a.system), 'user apps') + s(c(a => a.system), 'system apps') +
+    s(c(a => a.bloat && a.state === 'enabled'), 'bloat-list apps still active') + s(fmtSize(sz), 'APK size of those') + s(c(a => a.state === 'disabled'), 'disabled') + s(c(a => a.state === 'removed'), 'removed for user 0');
+}
+function renderChips() {
+  $('#chips').innerHTML = FILTERS.map(([k, l]) => `<span class="chip ${ui.filter === k ? 'active' : ''}" data-f="${k}">${l}<i>${apps.filter(filterFns[k]).length}</i></span>`).join('');
+}
+function renderOrigins() {
+  const o = [...new Set(apps.map(a => a.origin))].sort();
+  $('#originSel').innerHTML = '<option value="all">All origins</option>' + o.map(x => `<option ${ui.origin === x ? 'selected' : ''}>${esc(x)}</option>`).join('');
+}
+function renderHead() {
+  $('#thead').innerHTML = `<th class="nosort"><input type="checkbox" id="allChk"></th>` + COLS.map(([k, l]) => `<th data-k="${k}">${l}${ui.sortKey === k ? (ui.sortDir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('');
+}
+const stateBadge = s => s === 'enabled' ? '<span class="badge b-ok">enabled</span>' : s === 'disabled' ? '<span class="badge b-warn">disabled</span>' : '<span class="badge b-bad">removed</span>';
+function renderRows() {
+  const v = visibleApps();
+  $('#empty').classList.toggle('hidden', v.length > 0);
+  $('#tbody').innerHTML = v.map(a => `<tr data-p="${esc(a.pkg)}" class="${selected.has(a.pkg) ? 'sel' : ''}">
+    <td><input type="checkbox" class="rc" ${selected.has(a.pkg) ? 'checked' : ''}></td>
+    <td class="app"><b>${esc(a.name)}</b><small class="mono">${esc(a.pkg)}</small></td>
+    <td>${a.system ? 'System' : 'User'}</td><td>${stateBadge(a.state)}</td>
+    <td>${a.core ? '<span class="badge b-bad" title="Removing this can bootloop or break the phone">core</span>' : ''}${a.caution ? '<span class="badge b-warn" title="On your important-system-apps list">caution</span>' : ''}${a.bloat ? '<span class="badge b-acc" title="On your bloat list">bloat</span>' : ''}</td>
+    <td>${esc(a.origin)}</td><td class="mono">${a.vc ?? '—'}</td><td>${fmtSize(a.size)}</td>
+    <td>${a.launcher == null ? '—' : a.launcher ? 'yes' : 'no'}</td><td class="mono">${esc(a.installer ?? (a.system ? 'system' : '—'))}</td></tr>`).join('');
+  const all = $('#allChk'); if (all) all.checked = v.length > 0 && v.every(a => selected.has(a.pkg));
+}
+function updateActionButtons() {
+  const n = selected.size, on = n > 0 && !!adb;
+  $('#selCount').textContent = n;
+  ['aRemove', 'aDisable', 'aRestore'].forEach(i => $('#' + i).disabled = !on);
+  ['aMarketOff', 'aMarketOn', 'aReboot'].forEach(i => $('#' + i).disabled = !adb);
+}
+
+/* ============================================================
+   Detail drawer
+   ============================================================ */
+let drawerPkg = null;
+async function openDrawer(pkg, fetchDetails = true) {
+  const a = apps.find(x => x.pkg === pkg); if (!a) return;
+  drawerPkg = pkg; $('#drawer').classList.add('open'); $('#dTitle').textContent = a.name;
+  const base = `<dl class="kv">
+    <dt>Package</dt><dd class="mono">${esc(a.pkg)}</dd><dt>Type</dt><dd>${a.system ? 'System' : 'User'} · ${esc(a.origin)}</dd>
+    <dt>State</dt><dd>${stateBadge(a.state)}</dd><dt>UID</dt><dd>${esc(a.uid ?? '—')}</dd><dt>APK path</dt><dd class="mono">${esc(a.path ?? '—')}</dd>
+    <dt>APK size</dt><dd>${fmtSize(a.size)}</dd><dt>Installer</dt><dd>${esc(a.installer ?? '—')}</dd></dl>
+    ${a.core ? '<div class="banner err">Likely a core system package. Removing it can bootloop the phone.</div>' : ''}
+    ${a.caution ? '<div class="banner info" style="border-color:#6b5320;color:#f5d58a;background:#2a2212">On your “important system apps” list — your script restores this one.</div>' : ''}
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin:10px 0">
+      <button class="btn sm danger" data-da="remove">Remove</button><button class="btn sm" data-da="disable">Disable</button>
+      <button class="btn sm" data-da="restore">Restore</button><button class="btn sm" data-da="stop">Force stop</button><button class="btn sm" data-da="clear">Clear data</button></div>
+    <div id="dDetails" style="color:var(--mut)">${fetchDetails ? 'Reading dumpsys package…' : ''}</div>`;
+  $('#dBody').innerHTML = base;
+  if (!fetchDetails) { if (a._det) $('#dDetails').innerHTML = a._det; return; }
+  if (!adb) { $('#dDetails').textContent = 'Device disconnected.'; return; }
+  try {
+    const t = await sh(`dumpsys package ${pkg}`, true);
+    const first = rx => (t.match(rx) || [])[1];
+    const section = name => {
+      const lines = t.split('\n'); const i = lines.findIndex(l => l.trim() === name); if (i < 0) return [];
+      const ind = lines[i].match(/^\s*/)[0].length, out = [];
+      for (let j = i + 1; j < lines.length; j++) { const l = lines[j]; if (!l.trim() || l.match(/^\s*/)[0].length <= ind) break; out.push(l.trim()); }
+      return out;
+    };
+    const req = section('requested permissions:').map(l => l.split(':')[0]);
+    const runtime = section('runtime permissions:').filter(l => /granted=true/.test(l)).map(l => l.split(':')[0]);
+    const flags = first(/\n\s*flags=\[ ([^\]]*)\]/);
+    const kv = (k, v) => `<dt>${k}</dt><dd>${esc(v || '—')}</dd>`;
+    const html = `<dl class="kv">${kv('Version', first(/versionName=(\S+)/))}${kv('Target SDK', first(/targetSdk=(\d+)/))}${kv('Min SDK', first(/minSdk=(\d+)/))}
+      ${kv('First installed', first(/firstInstallTime=(.+)/))}${kv('Last updated', first(/lastUpdateTime=(.+)/))}${kv('Data dir', first(/dataDir=(\S+)/))}${kv('Flags', flags)}</dl>
+      <b style="color:var(--text)">Runtime permissions granted (${runtime.length})</b><div class="perms">${runtime.map(p => `<div class="mono">${esc(p)}</div>`).join('') || '<div>none</div>'}</div>
+      <b style="color:var(--text);display:block;margin-top:10px">Requested permissions (${req.length})</b><div class="perms">${req.map(p => `<div class="mono">${esc(p)}</div>`).join('') || '<div>none</div>'}</div>`;
+    a._det = html; if (drawerPkg === pkg) $('#dDetails').innerHTML = html;
+  } catch (e) { $('#dDetails').textContent = 'Could not read details: ' + e.message; }
+}
+
+/* ============================================================
+   Backup dialog
+   ============================================================ */
+function renderBackup() {
+  const l = bkLoad();
+  $('#bkList').innerHTML = l.length ? l.map(x => `<div><span class="badge ${x.action === 'removed' ? 'b-bad' : 'b-warn'}">${x.action}</span><span class="mono">${esc(x.pkg)}</span> <span style="color:var(--mut)">${esc(prettyName(x.pkg))}</span></div>`).join('') : '<div style="color:var(--mut)">Nothing recorded yet.</div>';
+  $('#bkRestoreAll').disabled = !l.length || !adb;
+}
+
+/* ============================================================
+   Wiring
+   ============================================================ */
+$('#btnConnect').onclick = connect;
+$('#btnDisconnect').onclick = disconnect;
+$('#btnRescan').onclick = scan;
+$('#q').oninput = e => { ui.q = e.target.value; renderRows(); };
+$('#originSel').onchange = e => { ui.origin = e.target.value; renderRows(); };
+$('#chips').onclick = e => { const c = e.target.closest('.chip'); if (!c) return; ui.filter = c.dataset.f; renderChips(); renderRows(); };
+$('#thead').onclick = e => {
+  if (e.target.id === 'allChk') { const v = visibleApps(); e.target.checked ? v.forEach(a => selected.add(a.pkg)) : v.forEach(a => selected.delete(a.pkg)); renderRows(); updateActionButtons(); return; }
+  const th = e.target.closest('th[data-k]'); if (!th) return;
+  ui.sortDir = ui.sortKey === th.dataset.k ? -ui.sortDir : 1; ui.sortKey = th.dataset.k; renderHead(); renderRows();
+};
+$('#tbody').onclick = e => {
+  const tr = e.target.closest('tr'); if (!tr) return; const p = tr.dataset.p;
+  if (e.target.classList.contains('rc')) { e.target.checked ? selected.add(p) : selected.delete(p); tr.classList.toggle('sel', e.target.checked); updateActionButtons(); return; }
+  openDrawer(p);
+};
+$('#selBloat').onclick = () => { apps.filter(a => a.bloat && !a.caution && a.state === 'enabled').forEach(a => selected.add(a.pkg)); renderRows(); updateActionButtons(); };
+$('#selBloatAll').onclick = () => { apps.filter(a => a.bloat && a.state === 'enabled').forEach(a => selected.add(a.pkg)); renderRows(); updateActionButtons(); };
+$('#selVisible').onclick = () => { visibleApps().forEach(a => selected.add(a.pkg)); renderRows(); updateActionButtons(); };
+$('#selClear').onclick = () => { selected.clear(); renderRows(); updateActionButtons(); };
+$('#aRemove').onclick = () => runAction('remove', [...selected]);
+$('#aDisable').onclick = () => runAction('disable', [...selected]);
+$('#aRestore').onclick = () => runAction('restore', [...selected]);
+$('#aMarketOff').onclick = marketOff; $('#aMarketOn').onclick = marketOn;
+$('#aReboot').onclick = async () => { if (await confirmBox({ title: 'Reboot device?', html: 'The phone will restart and the USB session will end.', ok: 'Reboot' })) { try { await sh('reboot'); } catch { } } };
+$('#aExport').onclick = () => {
+  const rows = visibleApps();
+  const csv = ['package,name,type,state,origin,versionCode,apkBytes,launcher,installer,bloat,caution,core'].concat(rows.map(a => [a.pkg, a.name, a.system ? 'system' : 'user', a.state, a.origin, a.vc ?? '', a.size ?? '', a.launcher ?? '', a.installer ?? '', a.bloat, a.caution, a.core].map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))).join('\n');
+  download('installed_packages.csv', csv, 'text/csv'); log(`Exported ${rows.length} rows to installed_packages.csv`, 'l-ok');
+};
+$('#dClose').onclick = () => { $('#drawer').classList.remove('open'); drawerPkg = null; };
+$('#dBody').onclick = e => { const b = e.target.closest('[data-da]'); if (b && drawerPkg) runAction(b.dataset.da, [drawerPkg]); };
+$('#cmdRun').onclick = async () => {
+  const c = $('#cmd').value.trim(); if (!c) return;
+  try { const o = await sh(c); log(o.trim() || '(no output)'); } catch (e) { log(e.message, 'l-err'); }
+};
+$('#cmd').onkeydown = e => { if (e.key === 'Enter') $('#cmdRun').click(); };
+
+$('#btnBackup').onclick = () => { renderBackup(); $('#bk').showModal(); };
+$('#bkClose').onclick = () => $('#bk').close();
+$('#bkClear').onclick = () => { bkSave([]); renderBackup(); };
+$('#bkExport').onclick = () => download('removed_packages_backup.txt', '# Debloated Packages Backup\n' + bkLoad().map(x => x.pkg).join('\n') + '\n');
+$('#bkImport').onclick = () => $('#bkFile').click();
+$('#bkFile').onchange = async e => {
+  const f = e.target.files[0]; if (!f) return; const t = await f.text(); let pk = [];
+  try { const j = JSON.parse(t); pk = j.map(x => typeof x === 'string' ? x : x.pkg); } catch { pk = t.split('\n').map(s => s.trim()).filter(s => s && !s.startsWith('#')); }
+  const l = bkLoad(); for (const p of pk.filter(p => SAFE_PKG.test(p))) if (!l.find(x => x.pkg === p)) l.push({ pkg: p, action: 'removed', t: Date.now() });
+  bkSave(l); renderBackup(); e.target.value = '';
+};
+$('#bkRestoreAll').onclick = async () => { const p = bkLoad().map(x => x.pkg); $('#bk').close(); await runAction('restore', p); };
+bkSave(bkLoad());
+
+if (!('usb' in navigator)) showBanner('err', 'This browser does not support WebUSB. Use Chrome or Edge on desktop.');
+</script>
 </body>
 </html>
